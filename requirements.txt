@@ -1,0 +1,14 @@
+# LLM客户端依赖
+aiohttp>=3.8.0
+httpx>=0.24.0
+openai>=1.0.0
+pydantic>=2.0.0
+
+# 配置管理
+toml>=0.10.2
+
+# FastMCP
+fastmcp>=0.1.0
+
+# 其他工具依赖
+python-dotenv>=1.0.0

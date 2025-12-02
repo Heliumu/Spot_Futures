@@ -1,0 +1,39 @@
+[llm]
+default_provider = "zhipu"
+
+[llm_providers.zhipu]
+api_key = "${ZHIPU_API_KEY}"
+base_url = "https://open.bigmodel.cn/api/paas/v4"
+model = "glm-4-flash"
+temperature = 0.7
+max_tokens = 1024
+
+[llm_providers.deepseek]
+api_key = "${DEEPSEEK_API_KEY}"
+base_url = "https://api.deepseek.com"
+model = "deepseek-chat"
+temperature = 0.7
+max_tokens = 1024
+
+[llm_providers.gemini3]
+api_key = "${GEMINI3_API_KEY}"
+base_url = "https://generativelanguage.googleapis.com/v1beta"
+model = "gemini-1.5-flash"
+temperature = 0.7
+max_tokens = 1024
+
+[agents]
+default_llm = "zhipu"
+
+[debug]
+enabled = true
+port = 5173
+
+# 可以为不同Agent指定不同的LLM
+[agents.llm_mapping]
+basis = "zhipu"
+macro = "zhipu"
+industry = "zhipu"
+price = "zhipu"
+orchestrator = "zhipu"
+
