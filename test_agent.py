@@ -1,3 +1,4 @@
+# test_agent.py
 import asyncio
 import logging
 from agents import (
@@ -5,7 +6,9 @@ from agents import (
     MacroEconomicAgent, 
     IndustryFundamentalsAgent,
     PriceAnalysisAgent,
-    OrchestratorAgent
+    FactoryInventoryAnalysisAgent,
+    SocialInventoryAnalysisAgent,
+    OrchestratorAgent,
 )
 from config.manager import config_manager
 
@@ -32,7 +35,9 @@ async def test_individual_agents():
         "基差分析": BasisAnalysisAgent(default_llm),
         "宏观经济": MacroEconomicAgent(default_llm),
         "产业基本面": IndustryFundamentalsAgent(default_llm),
-        "价格分析": PriceAnalysisAgent(default_llm)
+        "价格分析": PriceAnalysisAgent(default_llm),
+        "工厂库存分析": FactoryInventoryAnalysisAgent(default_llm),
+        "社会库存分析": SocialInventoryAnalysisAgent(default_llm),
     }
     
     for name, agent in agents.items():
