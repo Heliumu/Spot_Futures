@@ -5,6 +5,9 @@ from .basis_analysis_agent import BasisAnalysisAgent
 from .macro_economic_agent import MacroEconomicAgent
 from .industry_fundamentals_agent import IndustryFundamentalsAgent
 from .price_analysis_agent import PriceAnalysisAgent
+from .factory_inventory_analysis_agent import FactoryInventoryAnalysisAgent # 新增
+from .social_inventory_analysis_agent import SocialInventoryAnalysisAgent   # 新增
+from .strategy_design_agent import StrategyDesignAgent
 from utils.prompt_loader import prompt_loader
 import asyncio
 import logging
@@ -24,6 +27,9 @@ class OrchestratorAgent(BaseAgent):
         self.macro_agent = MacroEconomicAgent(llm_provider)
         self.industry_agent = IndustryFundamentalsAgent(llm_provider)
         self.price_agent = PriceAnalysisAgent(llm_provider)
+        self.factory_agent = FactoryInventoryAnalysisAgent(llm_provider) 
+        self.social_agent = SocialInventoryAnalysisAgent(llm_provider)   
+        self.strategy_agent = StrategyDesignAgent(llm_provider)
     
     async def analyze(self, content: str, commodity_name: str, **kwargs) -> str:
         """
@@ -67,7 +73,7 @@ class OrchestratorAgent(BaseAgent):
         
         # 默认执行所有分析
         if analysis_types is None:
-            analysis_types = ['basis', 'macro', 'industry', 'price']
+            analysis_types = ['basis', 'macro', 'industry', 'price', 'factory', 'social', 'strategy_design']
         
         logger.info(f"开始 {commodity_name} 综合分析，执行类型: {', '.join(analysis_types)}")
         
@@ -90,6 +96,18 @@ class OrchestratorAgent(BaseAgent):
         if 'price' in analysis_types:
             tasks.append(self.price_agent.analyze(content, commodity_name))
             task_names.append('price')
+        
+        if 'factory' in analysis_types:
+            tasks.append(self.factory_agent.analyze(content, commodity_name))
+            task_names.append('factory')
+        
+        if 'social' in analysis_types:
+            tasks.append(self.social_agent.analyze(content, commodity_name))
+            task_names.append('social')
+        
+        # if 'strategy_design' in analysis_types:
+        #     tasks.append(self.strategy_agent.analyze(commodity_name, content, market_analysis_report=analysis_results))
+        #     task_names.append('strategy_design')
         
         # 并行执行分析
         results = await asyncio.gather(*tasks, return_exceptions=True)
@@ -115,6 +133,25 @@ class OrchestratorAgent(BaseAgent):
             logger.error(f"{commodity_name} 综合分析生成失败: {e}")
             analysis_results['comprehensive'] = f"综合分析生成失败: {str(e)}"
         
+        try:
+            strategy_designer = StrategyDesignAgent(self.llm_provider)
+            # 将完整的分析报告作为输入
+            full_report = "\n\n".join(
+                [f"===== {key.upper()} ANALYSIS =====\n{value}" for key, value in analysis_results.items()]
+            )
+            # 修正调用：提供所有必需的参数
+            strategy_result = await strategy_designer.analyze(
+                content=full_report, 
+                commodity_name=commodity_name, 
+                market_analysis_report=full_report
+            )
+            analysis_results['strategy_design'] = strategy_result
+            logger.info(f"{commodity_name} 结构化策略设计完成")
+        except Exception as e:
+            logger.error(f"{commodity_name} 策略设计失败: {e}")
+            analysis_results['strategy_design'] = f"策略设计失败: {str(e)}"
+        # ==================================================
+
         return analysis_results
     
     async def _generate_comprehensive_analysis(
@@ -138,7 +175,10 @@ class OrchestratorAgent(BaseAgent):
             basis_analysis=analysis_results.get('basis', '未执行基差分析'),
             macro_economic=analysis_results.get('macro', '未执行宏观经济分析'),
             industry_fundamentals=analysis_results.get('industry', '未执行产业基本面分析'),
-            price_analysis=analysis_results.get('price', '未执行价格分析')
+            price_analysis=analysis_results.get('price', '未执行价格分析'),
+            factory_inventory=analysis_results.get('factory', '未执行工厂库存分析'),
+            social_inventory=analysis_results.get('social', '未执行社会库存分析'),
+            strategy_design=analysis_results.get('strategy_design', '未执行策略设计')
         )
         
         messages = [{"role": "user", "content": orchestrator_prompt}]
@@ -160,7 +200,10 @@ class OrchestratorAgent(BaseAgent):
             'basis': self.basis_agent,
             'macro': self.macro_agent,
             'industry': self.industry_agent,
-            'price': self.price_agent
+            'price': self.price_agent,
+            'factory': self.factory_agent,
+            'social': self.social_agent,
+            'strategy_design': self.strategy_agent,
         }
         
         if analysis_type not in agent_map:
@@ -171,4 +214,4 @@ class OrchestratorAgent(BaseAgent):
     
     def get_supported_analysis_types(self) -> List[str]:
         """获取支持的分析类型列表"""
-        return ['basis', 'macro', 'industry', 'price']
+        return ['basis', 'macro', 'industry', 'price', 'factory', 'social', 'strategy_design']

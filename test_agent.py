@@ -9,6 +9,7 @@ from agents import (
     FactoryInventoryAnalysisAgent,
     SocialInventoryAnalysisAgent,
     OrchestratorAgent,
+    StrategyDesignAgent
 )
 from config.manager import config_manager
 
@@ -38,6 +39,7 @@ async def test_individual_agents():
         "价格分析": PriceAnalysisAgent(default_llm),
         "工厂库存分析": FactoryInventoryAnalysisAgent(default_llm),
         "社会库存分析": SocialInventoryAnalysisAgent(default_llm),
+        "策略设计": StrategyDesignAgent(default_llm),
     }
     
     for name, agent in agents.items():
@@ -61,6 +63,9 @@ async def test_orchestrator():
     - 港口库存：80万吨，环比下降8%
     - 需求：生猪养殖利润回升，饲料需求预期增加
     """
+    # test_content = """
+    # 找到豆粕市场最新动态
+    # """
     
     try:
         print("\n=== 综合分析 ===")
@@ -94,7 +99,7 @@ async def main():
     print("开始测试Agent...")
     
     # 测试商品名称验证
-    await test_validation()
+    # await test_validation()
     
     # 测试各个Agent
     await test_individual_agents()

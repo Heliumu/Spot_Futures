@@ -6,6 +6,7 @@ from .industry_fundamentals_agent import IndustryFundamentalsAgent
 from .price_analysis_agent import PriceAnalysisAgent
 from .factory_inventory_analysis_agent import FactoryInventoryAnalysisAgent # 新增
 from .social_inventory_analysis_agent import SocialInventoryAnalysisAgent   # 新增
+from .strategy_design_agent import StrategyDesignAgent
 from .orchestrator_agent import OrchestratorAgent
 
 __all__ = [
@@ -16,5 +17,6 @@ __all__ = [
     'PriceAnalysisAgent',
     'FactoryInventoryAnalysisAgent', # 新增
     'SocialInventoryAnalysisAgent',   # 新增
-    'OrchestratorAgent'
+    'OrchestratorAgent',
+    'StrategyDesignAgent'
 ]

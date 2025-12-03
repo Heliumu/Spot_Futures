@@ -25,7 +25,7 @@ mcp = FastMCP("commodity-analysis-server")
 async def comprehensive_analysis(
     commodity_name: str,
     content: str = "",
-    analysis_types: List[str] = ["basis", "macro", "industry", "price", "factory", "social"]
+    analysis_types: List[str] = ["basis", "macro", "industry", "price", "factory", "social", "strategy_design"]
 ) -> str:
     """
     [分析] 对指定商品进行全面分析，包括基差、宏观、产业基本面和价格分析。
@@ -33,7 +33,7 @@ async def comprehensive_analysis(
     Args:
         commodity_name: 商品名称，例如：豆粕、铜、原油。
         content: 用于分析的市场数据、新闻或文本内容。如果为空，Agent将尝试通过网络搜索获取信息。
-        analysis_types: 指定要执行的分析类型列表，可选值: ["basis", "macro", "industry", "price"]。默认执行所有类型。
+        analysis_types: 指定要执行的分析类型列表，可选值: ["basis", "macro", "industry", "price", "factory", "social", "strategy_design"]。默认执行所有类型。
     """
     try:
         if not commodity_name or not commodity_name.strip():
@@ -77,7 +77,7 @@ async def single_analysis(
     [分析] 对指定商品进行单一维度的分析。
 
     Args:
-        analysis_type: 分析类型，可选值: "basis", "macro", "industry", "price", "factory", "social"。
+        analysis_type: 分析类型，可选值: "basis":基差分析, "macro":宏观分析, "industry":产业基本面分析, "price":价格分析, "factory":工厂分析, "social":社会分析, "strategy_design":策略设计。
         commodity_name: 商品名称，例如：豆粕。
         content: 用于分析的内容。如果为空，Agent将尝试通过网络搜索获取信息。
     """
@@ -87,7 +87,7 @@ async def single_analysis(
         if not commodity_name or not commodity_name.strip():
             return "错误：'commodity_name' 参数不能为空。"
         
-        valid_types = ["basis", "macro", "industry", "price"]
+        valid_types = ["basis", "macro", "industry", "price", "factory", "social", "strategy_design"]
         if analysis_type not in valid_types:
             return f"错误：无效的 'analysis_type'。可选值为: {', '.join(valid_types)}"
 
